@@ -187,5 +187,6 @@ tableextension 50012 "Sales Line" extends "Sales Line"
             DataClassification = ToBeClassified;
             TableRelation = "Deferral Template"."Deferral Code";
         }
+        // Filed id 87006 has been used in posted sales invoice line and credit memo line as a flow field.
     }
 }

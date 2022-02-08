@@ -2392,7 +2392,7 @@
                                   </TablixMember>
                                   <TablixMember>
                                     <Visibility>
-                                      <Hidden>true</Hidden>
+                                      <Hidden>=Fields!YourReference.Value =""</Hidden>
                                     </Visibility>
                                   </TablixMember>
                                   <TablixMember />

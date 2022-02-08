@@ -159,5 +159,11 @@ tableextension 50022 "Sales Invoice Line" extends "Sales Invoice Line"
             DataClassification = ToBeClassified;
             //TableRelation = "Deferral Template"."Deferral Code";
         }
+        field(87006; "Shortcut Dimension 4 Code"; Code[20])
+        {
+            CaptionClass = '1,2,4';
+            FieldClass = FlowField;
+            CalcFormula = lookup("Dimension Set Entry"."Dimension Value Code" where("Dimension Set ID" = field("Dimension Set ID"), "Global Dimension No." = const(4)));
+        }
     }
 }

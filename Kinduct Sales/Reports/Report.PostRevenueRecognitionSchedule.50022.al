@@ -43,7 +43,6 @@ report 50022 "Recognize Revenue"
                 GenJnlLine."Country/Region Code" := "Revenue Recognition Schedule".Country;
                 GenJnlLine."Item Code" := "Revenue Recognition Schedule"."Item Code";
                 GenJnlLine."Item Description" := "Revenue Recognition Schedule"."Item Description";
-                //Need to remove from Live
                 GenJnlLine.Validate("Reason Code", "Revenue Recognition Schedule"."Reason Code");
                 GenJnlLine.Insert(true);
             end;
