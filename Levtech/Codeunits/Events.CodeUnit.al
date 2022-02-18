@@ -357,7 +357,7 @@ codeunit 50101 "Events"
         //100% discount- flowing line discount % and Line discount amount
         if ICInboxSalesLine."IC Partner Ref. Type" <> ICInboxSalesLine."IC Partner Ref. Type"::" " then begin
             SalesLine.validate("Line Discount %", ICInboxSalesLine."Line Discount %");
-            SalesLine.Validate("Line Discount Amount", ICInboxSalesLine."Line Discount Amount");
+            //SalesLine.Validate("Line Discount Amount", ICInboxSalesLine."Line Discount Amount");
         end;
     end;
 
@@ -563,7 +563,9 @@ codeunit 50101 "Events"
     var
         SalesLineL: Record "Sales Line";
         CreateRevenueSchedule: Codeunit "Create Revenue Schedule";
+        GenProductPosting: Record "Gen. Product Posting Group";
     begin
+        Clear(ItemNo);
         ReccompanyInfo.GET;
         if not ReccompanyInfo."Kinduct Deferral" then exit;
         if SalesHeader."Document Type" <> SalesHeader."Document Type"::Order then exit;
@@ -572,8 +574,15 @@ codeunit 50101 "Events"
         SalesLineL.SetRange("Document No.", SalesHeader."No.");
         if SalesLineL.FindSet() then
             repeat
-                CreateRevenueSchedule.InsertRevenueRecognitionSchedule(SalesHeader, SalesLineL);
+                Clear(GenProductPosting);
+                if GenProductPosting.Get(SalesLineL."Gen. Prod. Posting Group") then
+                    if GenProductPosting."Revenue Schedule_LT" then
+                        CreateRevenueSchedule.InsertRevenueRecognitionSchedule(SalesHeader, SalesLineL)
+                    else
+                        ItemNo := SalesLineL."No.";
             until SalesLineL.Next() = 0;
+        if ItemNo <> '' then
+            Message('For the item(s) which does not have Gen. Prod. Posting Group as LICENSING, the Revenue Schedule is not calculated.');
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Release Sales Document", 'OnBeforeReopenSalesDoc', '', false, false)]
@@ -592,7 +601,10 @@ codeunit 50101 "Events"
     var
         SalesLineL: Record "Sales Line";
         CreateRevenueSchedule: Codeunit "Create Revenue Schedule";
+        GenProductPosting: Record "Gen. Product Posting Group";
+        CheckList: List of [Text];
     begin
+        Clear(ItemNo);
         ReccompanyInfo.GET;
         if not ReccompanyInfo."Kinduct Deferral" then exit;
         if SalesHeader."Document Type" <> SalesHeader."Document Type"::Order then exit;
@@ -601,8 +613,15 @@ codeunit 50101 "Events"
         SalesLineL.SetRange("Document No.", SalesHeader."No.");
         if SalesLineL.FindSet() then
             repeat
-                CreateRevenueSchedule.InsertRevenueRecognitionSchedule(SalesHeader, SalesLineL);
+                Clear(GenProductPosting);
+                if GenProductPosting.Get(SalesLineL."Gen. Prod. Posting Group") then
+                    if GenProductPosting."Revenue Schedule_LT" then
+                        CreateRevenueSchedule.InsertRevenueRecognitionSchedule(SalesHeader, SalesLineL)
+                    else
+                        ItemNo := SalesLineL."No."
             until SalesLineL.Next() = 0;
+        if ItemNo <> '' then
+            Message('For the item(s) which does not have Gen. Prod. Posting Group as LICENSING, the Revenue Schedule is not calculated.');
     end;
 
     local procedure DeleteRevenueSchedule(SalesOrderNO: code[20])
@@ -619,4 +638,5 @@ codeunit 50101 "Events"
 
     var
         ReccompanyInfo: Record "Company Information";
+        ItemNo: Code[20];
 }
